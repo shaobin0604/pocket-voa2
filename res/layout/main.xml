@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent">
+	<RadioGroup android:layout_alignParentTop="true" android:orientation="horizontal" android:id="@+id/navi_bar" android:layout_width="fill_parent" android:layout_height="45dip">
+		<RadioButton android:id="@+id/radio_new" android:layout_width="0dip" android:layout_weight="1.0" android:layout_height="fill_parent" android:text="New" style="@style/ContentTabRadioButton"/>
+      	<RadioButton android:id="@+id/radio_browse" android:layout_width="0dip" android:layout_weight="1.0" android:layout_height="fill_parent" android:text="Browse" style="@style/ContentTabRadioButton"/>
+        <RadioButton android:id="@+id/radio_download" android:layout_width="0dip" android:layout_weight="1.0" android:layout_height="fill_parent" android:text="Download" style="@style/ContentTabRadioButton"/>
+	</RadioGroup>
+	
+	<LinearLayout android:orientation="vertical" android:id="@+id/holder" android:layout_width="fill_parent" android:layout_height="fill_parent" android:layout_below="@id/navi_bar"/>
+	
+    <SlidingDrawer android:id="@+id/player_drawer" android:layout_alignParentBottom="true" android:layout_width="fill_parent" android:layout_height="fill_parent" android:handle="@+id/player_contracted" android:content="@+id/content">
+        <include layout="@layout/player_contracted"/>
+        <TextView android:id="@id/content" android:layout_width="fill_parent" android:layout_height="fill_parent" android:text="content"/>
+    </SlidingDrawer>
+</RelativeLayout>  
