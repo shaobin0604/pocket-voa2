@@ -1,18 +1,14 @@
 package cn.yo2.aquarium.pocketvoa2.provider;
 
-import java.util.Date;
-
 import android.net.Uri;
 import android.provider.BaseColumns;
 
 public class FeedItem extends BaseEntity {
-	protected static final String PATH = "/items/";
-	
-	String url;
-	String title;
-	String description;
-	Date pubDate;
-	long feedId;
+	public String url;
+	public String title;
+	public String description;
+	public String pubDate;
+	public long feedId;
 	
 	public static final class Columns implements BaseColumns {
 		public static final String TITLE = "title";
@@ -37,11 +33,19 @@ public class FeedItem extends BaseEntity {
 		public static final String DROP_TABLE_SQL = "DROP TABLE IF EXISTS " + TABLE_NAME + ";"; 
 	}
 	
-	public static final Uri contentUri(long feedId) {
-		return Uri.parse(new StringBuilder(CONTENT_URI_PREFIX).append("/feeds/").append(feedId).append("/items/").toString());
+	public static final Uri contentUri() {
+		return Uri.parse(new StringBuilder(CONTENT_URI_PREFIX).append("/items").toString());
 	}
 	
-	public static final Uri contentUri(long feedId, String itemId) {
-		return Uri.parse(new StringBuilder(CONTENT_URI_PREFIX).append("/feeds/").append(feedId).append("/items/").append(itemId).toString());
+	public static final Uri contentUri(long itemId) {
+		return Uri.parse(new StringBuilder(CONTENT_URI_PREFIX).append("/items/").append(itemId).toString());
 	}
+	
+//	public static final Uri contentUri(long feedId) {
+//		return Uri.parse(new StringBuilder(CONTENT_URI_PREFIX).append("/feeds/").append(feedId).append("/items").toString());
+//	}
+//	
+//	public static final Uri contentUri(long feedId, String itemId) {
+//		return Uri.parse(new StringBuilder(CONTENT_URI_PREFIX).append("/feeds/").append(feedId).append("/items/").append(itemId).toString());
+//	}
 }

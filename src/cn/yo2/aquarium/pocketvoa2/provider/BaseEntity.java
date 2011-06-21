@@ -10,5 +10,5 @@ public class BaseEntity {
 	protected static final String AUTHORITY = "cn.yo2.aquarium.pocketvoa2.provider";
 	protected static final String CONTENT_URI_PREFIX = "content://" + AUTHORITY;
 	
-	long _id;
+	public long _id;
 }

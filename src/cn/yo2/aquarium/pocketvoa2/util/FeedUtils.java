@@ -1,4 +1,4 @@
-package cn.yo2.aquarium.pocketvoa2;
+package cn.yo2.aquarium.pocketvoa2.util;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
@@ -36,16 +36,43 @@ import org.apache.http.impl.conn.SingleClientConnManager;
 import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
-import org.apache.http.protocol.HTTP;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.CharArrayBuffer;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
 
-import cn.yo2.aquarium.pocketvoa2.util.Logger;
+import cn.yo2.aquarium.pocketvoa2.provider.FeedItem;
 
-public class RssParser {
+public class FeedUtils {
+	public static class FeedException extends Exception {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+
+		public FeedException() {
+			super();
+			// TODO Auto-generated constructor stub
+		}
+
+		public FeedException(String detailMessage, Throwable throwable) {
+			super(detailMessage, throwable);
+			// TODO Auto-generated constructor stub
+		}
+
+		public FeedException(String detailMessage) {
+			super(detailMessage);
+			// TODO Auto-generated constructor stub
+		}
+
+		public FeedException(Throwable throwable) {
+			super(throwable);
+			// TODO Auto-generated constructor stub
+		}
+		
+	}
+	
 	private static final int CONN_TIME_OUT = 1000 * 30; // millis
 	private static final int READ_TIME_OUT = 1000 * 30; // millis
 
@@ -104,9 +131,9 @@ public class RssParser {
 				throws HttpResponseException, IOException {
 			StatusLine statusLine = response.getStatusLine();
 
-			for (Header header : response.getAllHeaders()) {
-				Logger.d(header.toString());
-			}
+//			for (Header header : response.getAllHeaders()) {
+//				Logger.d(header.toString());
+//			}
 
 			if (statusLine.getStatusCode() >= 300) {
 				throw new HttpResponseException(statusLine.getStatusCode(),
@@ -118,22 +145,8 @@ public class RssParser {
 
 	}
 
-	public static class Entry {
-		long _id;
-		String title;
-		String url;
-		String date;
-
-		@Override
-		public String toString() {
-			return "Entry [_id=" + _id + ", title=" + title + ", url=" + url
-					+ ", date=" + date + "]";
-		}
-
-	}
-
-	private static ArrayList<Entry> parseText(String text) {
-		ArrayList<Entry> list = new ArrayList<Entry>();
+	private static ArrayList<FeedItem> parseText(String text) throws FeedException {
+		ArrayList<FeedItem> list = new ArrayList<FeedItem>();
 
 		XmlPullParserFactory factory;
 		try {
@@ -146,42 +159,46 @@ public class RssParser {
 			int eventType = xpp.getEventType();
 
 			String tagName = null;
-			Entry entry = null;
+			FeedItem item = null;
 
 			while (eventType != XmlPullParser.END_DOCUMENT) {
 				if (eventType == XmlPullParser.START_TAG) {
 					tagName = xpp.getName();
 
 					if ("item".equals(tagName)) {
-						entry = new Entry();
-					} else if ("title".equals(tagName) && entry != null) {
-						entry.title = xpp.nextText();
-					} else if ("link".equals(tagName) && entry != null) {
-						entry.url = xpp.nextText();
-					} else if ("pubDate".equals(tagName) && entry != null) {
-						entry.date = xpp.nextText();
+						item = new FeedItem();
+					} else if ("title".equals(tagName) && item != null) {
+						item.title = xpp.nextText();
+					} else if ("link".equals(tagName) && item != null) {
+						item.url = xpp.nextText();
+					} else if ("pubDate".equals(tagName) && item != null) {
+						item.pubDate = xpp.nextText();
+					} else if ("description".equals(tagName) && item != null) {
+						item.description = xpp.nextText();
 					}
 
 				} else if (eventType == XmlPullParser.END_TAG) {
 					tagName = xpp.getName();
 
-					if ("item".equals(tagName) && entry != null) {
-						list.add(entry);
+					if ("item".equals(tagName) && item != null) {
+						list.add(item);
 					}
 				}
 				eventType = xpp.next();
 			}
+			return list;
 		} catch (XmlPullParserException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			String msg = "Error when parse xml";
+			Logger.e(msg, e);
+			throw new FeedException(msg, e);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			String msg = "Error when read xml";
+			Logger.e(msg, e);
+			throw new FeedException(msg, e);
 		}
-		return list;
 	}
 
-	public static List<Entry> parse2(String url) {
+	public static List<FeedItem> parse2(String url) throws FeedException {
 		HttpURLConnection urlConnection = null;
 		try {
 			urlConnection = (HttpURLConnection) new URL(url).openConnection();
@@ -205,15 +222,14 @@ public class RssParser {
 			Logger.d(body);
 			return parseText(body);
 		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			String msg = "Error when send http request";
+			Logger.e(msg, e);
+			throw new FeedException(msg, e);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			String msg = "Error when receive http response";
+			Logger.e(msg, e);
+			throw new FeedException(msg, e);
 		}
-
-		return Collections.emptyList();
-
 	}
 
 	private static void writeToFile(String text) {
@@ -237,10 +253,12 @@ public class RssParser {
 
 	}
 
-	public static List<Entry> parse(String url) {
+	public static List<FeedItem> getFeedItems(String feedUrl) throws FeedException {
+		Logger.d("feedUrl = " + feedUrl);
+		
 		DefaultHttpClient httpClient = createHttpClient();
 
-		HttpGet get = new HttpGet(url);
+		HttpGet get = new HttpGet(feedUrl);
 
 		try {
 			String body = httpClient.execute(get, sHandler);
@@ -249,18 +267,18 @@ public class RssParser {
 
 			return parseText(body);
 		} catch (ClientProtocolException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 			get.abort();
+			String msg = "Error when send http request";
+			Logger.e(msg, e);
+			throw new FeedException(msg, e);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 			get.abort();
+			String msg = "Error when receive http response";
+			Logger.e(msg, e);
+			throw new FeedException(msg, e);
 		} finally {
 			httpClient.getConnectionManager().shutdown();
 		}
-		List<Entry> empty = Collections.emptyList();
-		return empty;
 	}
 
 	private static DefaultHttpClient createHttpClient() {

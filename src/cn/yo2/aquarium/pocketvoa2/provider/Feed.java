@@ -1,14 +1,24 @@
 package cn.yo2.aquarium.pocketvoa2.provider;
 
-import java.util.Date;
-
+import android.database.Cursor;
 import android.net.Uri;
 import android.provider.BaseColumns;
 
 public final class Feed extends BaseEntity {
-	String name;
-	String url;
-	Date pubDate;
+	public String name;
+	public String url;
+	public String pubDate;
+	
+	public Feed() {
+		
+	}
+	
+	public Feed(Cursor cursor) {
+		_id = cursor.getLong(0);
+		name = cursor.getString(1);
+		url = cursor.getString(2);
+		pubDate = cursor.getString(3);
+	}
 	
 	public static final class Columns implements BaseColumns {
 		public static final String NAME = "name";
@@ -32,7 +42,7 @@ public final class Feed extends BaseEntity {
 	
 	
 	public static final Uri contentUri() {
-		return Uri.parse(new StringBuilder(CONTENT_URI_PREFIX).append("/feeds/").toString());
+		return Uri.parse(new StringBuilder(CONTENT_URI_PREFIX).append("/feeds").toString());
 	}
 	
 	public static final Uri contentUri(long feedId) {

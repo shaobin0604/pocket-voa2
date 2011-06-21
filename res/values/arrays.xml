@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string-array name="feed_list_names">
+		<item>VOA Latest Update</item>
+		<item>VOA Special English</item>
+		<item>VOA Standard English</item>
+		<item>VOA English Learning</item>
+	</string-array>
+	
+	<string-array name="feed_list_values">
+		<item>http://www.51voa.com/voa.xml</item>
+		<item>http://www.51voa.com/sp.xml</item>
+		<item>http://www.51voa.com/st.xml</item>
+		<item>http://www.51voa.com/en.xml</item>
+	</string-array>
+</resources>

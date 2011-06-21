@@ -12,12 +12,12 @@
   			android:layout_width="0dip"
   			android:layout_height="wrap_content"
   			android:layout_weight="0.5"
-  			android:text="A"/>
+  			android:text="Add"/>
   		<Button android:id="@+id/btn_feed_update"
   			android:layout_width="0dip"
   			android:layout_height="wrap_content"
   			android:layout_weight="0.5"
-  			android:text="R"/>		
+  			android:text="Update"/>		
   	</LinearLayout> 
   	
   	<ExpandableListView android:id="@+id/feed_list"
