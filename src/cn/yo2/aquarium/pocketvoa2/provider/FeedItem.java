@@ -37,13 +37,13 @@ public class FeedItem extends BaseEntity {
 		return Uri.parse(new StringBuilder(CONTENT_URI_PREFIX).append("/items").toString());
 	}
 	
-	public static final Uri contentUri(long itemId) {
+	public static final Uri contentUriWithItemId(long itemId) {
 		return Uri.parse(new StringBuilder(CONTENT_URI_PREFIX).append("/items/").append(itemId).toString());
 	}
 	
-//	public static final Uri contentUri(long feedId) {
-//		return Uri.parse(new StringBuilder(CONTENT_URI_PREFIX).append("/feeds/").append(feedId).append("/items").toString());
-//	}
+	public static final Uri contentUriWithFeedId(long feedId) {
+		return Uri.parse(new StringBuilder(CONTENT_URI_PREFIX).append("/feeds/").append(feedId).append("/items").toString());
+	}
 //	
 //	public static final Uri contentUri(long feedId, String itemId) {
 //		return Uri.parse(new StringBuilder(CONTENT_URI_PREFIX).append("/feeds/").append(feedId).append("/items/").append(itemId).toString());

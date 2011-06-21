@@ -2,6 +2,8 @@ package cn.yo2.aquarium.pocketvoa2.provider;
 
 import java.io.File;
 
+import cn.yo2.aquarium.pocketvoa2.util.Logger;
+
 import android.content.ContentProvider;
 import android.content.ContentUris;
 import android.content.ContentValues;
@@ -24,10 +26,10 @@ public class Provider extends ContentProvider {
 	
 	private static final int URI_FEEDS = 1;
 	private static final int URI_FEED = 2;
-	private static final int URI_FEED_ENTRIES = 3;
-	private static final int URI_FEED_ENTRY = 4;
-	private static final int URI_ENTRIES = 5;
-	private static final int URI_ENTRY = 6;
+	private static final int URI_FEED_ITEMS = 3;
+	private static final int URI_FEED_ITEM = 4;
+	private static final int URI_ITEMS = 5;
+	private static final int URI_ITEM = 6;
 	
 	private static UriMatcher URI_MATCHER;
 	
@@ -35,10 +37,10 @@ public class Provider extends ContentProvider {
 		URI_MATCHER = new UriMatcher(UriMatcher.NO_MATCH);
 		URI_MATCHER.addURI(BaseEntity.AUTHORITY, "feeds", URI_FEEDS);
 		URI_MATCHER.addURI(BaseEntity.AUTHORITY, "feeds/#", URI_FEED);
-		URI_MATCHER.addURI(BaseEntity.AUTHORITY, "feeds/#/items", URI_FEED_ENTRIES);
-		URI_MATCHER.addURI(BaseEntity.AUTHORITY, "feeds/#/items/#", URI_FEED_ENTRY);
-		URI_MATCHER.addURI(BaseEntity.AUTHORITY, "items", URI_ENTRIES);
-		URI_MATCHER.addURI(BaseEntity.AUTHORITY, "items/#", URI_ENTRY);
+		URI_MATCHER.addURI(BaseEntity.AUTHORITY, "feeds/#/items", URI_FEED_ITEMS);
+		URI_MATCHER.addURI(BaseEntity.AUTHORITY, "feeds/#/items/#", URI_FEED_ITEM);
+		URI_MATCHER.addURI(BaseEntity.AUTHORITY, "items", URI_ITEMS);
+		URI_MATCHER.addURI(BaseEntity.AUTHORITY, "items/#", URI_ITEM);
 	}
 	
 	private static class DatabaseHelper {
@@ -147,12 +149,12 @@ public class Provider extends ContentProvider {
 				newId = mDatabase.insert(Feed.Columns.TABLE_NAME, null, values);
 				break;
 			}
-			case URI_FEED_ENTRIES: {
+			case URI_FEED_ITEMS: {
 				values.put(FeedItem.Columns.FEED_ID, uri.getPathSegments().get(1));
 				newId = mDatabase.insert(FeedItem.Columns.TABLE_NAME, null, values);
 				break;
 			}
-			case URI_ENTRIES: {
+			case URI_ITEMS: {
 				newId = mDatabase.insert(FeedItem.Columns.TABLE_NAME, null, values);
 				break;
 			}
@@ -191,21 +193,21 @@ public class Provider extends ContentProvider {
 				queryBuilder.setTables(Feed.Columns.TABLE_NAME);
 				break;
 			}
-			case URI_ENTRY : {
+			case URI_ITEM : {
 				queryBuilder.setTables(FeedItem.Columns.TABLE_NAME);
 				queryBuilder.appendWhere(new StringBuilder(FeedItem.Columns._ID).append('=').append(uri.getPathSegments().get(1)));
 				break;
 			}
-			case URI_ENTRIES : {
+			case URI_ITEMS : {
 				queryBuilder.setTables(FeedItem.Columns.TABLE_NAME);
 				break;
 			}
-			case URI_FEED_ENTRY : {
+			case URI_FEED_ITEM : {
 				queryBuilder.setTables(FeedItem.Columns.TABLE_NAME);
 				queryBuilder.appendWhere(new StringBuilder(FeedItem.Columns._ID).append('=').append(uri.getPathSegments().get(3)));
 				break;
 			}
-			case URI_FEED_ENTRIES : {
+			case URI_FEED_ITEMS : {
 				queryBuilder.setTables(FeedItem.Columns.TABLE_NAME);
 				queryBuilder.appendWhere(new StringBuilder(FeedItem.Columns.FEED_ID).append('=').append(uri.getPathSegments().get(1)));
 				break;
