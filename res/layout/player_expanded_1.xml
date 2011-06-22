@@ -15,6 +15,12 @@
   
   	<ViewFlipper android:layout_width="fill_parent"
   		android:layout_height="fill_parent">
+  		<WebView android:id="@+id/webview_en" 
+			android:layout_width="fill_parent"
+			android:layout_height="fill_parent" />
+		<WebView android:id="@+id/webview_zh" 
+			android:layout_width="fill_parent"
+			android:layout_height="fill_parent" />
   	</ViewFlipper>
   </LinearLayout>
   
